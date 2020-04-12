@@ -87,6 +87,7 @@ function handles = daboxplot(Y,varargin)
 %   'legend'          Names of groups (a cell) for creating a legend
 %                     Default: no legend
 %
+%
 % Output Arguments:
 %
 %   handles - a structure containing handles for further customization of
@@ -201,6 +202,9 @@ for g = 1:num_groups
     
     % get percentiles
     pt = prctile(Y(Gi==g,:),[2 9 25 50 75 91 98]); 
+    
+    if size(pt,1)==1 pt=pt'; end % a fix for plotting one condition
+    
     IQR = (pt(5,:)-pt(3,:));
         
     % create coordinates for drawing boxes
@@ -349,7 +353,8 @@ if exist('wh')
     handles.wh =  wh;
 end
 
-set(gca,'XTick',cpos,'box','off');
+set(gca,'XTick',cpos,'box','off'); % remove condition ticks
+xlim([gpos(1)-3*box_width, gpos(end)+3*box_width]); % adjust x-axis margins
 
 if ~isempty(confs.conditions)
     set(gca,'XTickLabels',confs.conditions,'XTick',cpos);
