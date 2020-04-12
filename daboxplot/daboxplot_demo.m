@@ -45,7 +45,7 @@ xl = xlim; xlim([xl(1), xl(2)+1]);    % make more space for the legend
 set(h.m,'Color','k','LineWidth',1.5); % customize median lines
 
 
-% filled boxplots, different color scheme and cutomized medians
+% filled boxplots, different color scheme, non-jittered scatter underneath
 subplot(3,3,3)
 h = daboxplot(data2(:,1:3),'groups',group_inx(1:90),'symbol','k+',...
     'conditions', condition_names,'legend',group_names(1:3),'color',c,...
