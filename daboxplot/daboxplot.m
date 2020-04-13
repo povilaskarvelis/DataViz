@@ -81,6 +81,12 @@ function handles = daboxplot(Y,varargin)
 %   'boxwidth'        Scales the width of all boxes
 %                     Default: 1
 %
+%   'linkline'        Superimposes lines linking boxplots across conditions
+%                     for each group. Helps to see more clearly possible 
+%                     interaction effects between conditions and groups.
+%                     0 - no dash lines (default)
+%                     1 - dash lines
+%
 %   'conditions'      Xtick labels for conditions (a cell of chars)
 %                     Default: conditions are numbered in the input order.
 %
@@ -94,12 +100,15 @@ function handles = daboxplot(Y,varargin)
 %   the produced plot:
 %       cpos - condition positions
 %       gpos - group positions
-%       bx - boxplot box (graphics object)
-%       m  - median line (graphics object)
-%       sc - scattered data markers (graphics object)
-%       ot - outlier markers (graphics object)
-%       wh - whiskers (graphics object)
-%       lg - legend (graphics object)
+%       
+%       graphics objects:
+%       bx - boxplot box 
+%       m  - median line
+%       sc - scattered data markers
+%       ot - outlier markers
+%       wh - whiskers 
+%       ln - line linking boxplots 
+%       lg - legend
 %
 %
 % For examples have a look at daboxplot_demo.m
@@ -130,6 +139,7 @@ addOptional(p, 'symbol', 'rx');
 addOptional(p, 'boxalpha', 1);
 addOptional(p, 'boxspacing', 1);
 addOptional(p, 'boxwidth', 1);
+addOptional(p, 'linkline',0);
 addOptional(p, 'conditions', []);
 addOptional(p, 'legend', []);
 
@@ -305,9 +315,20 @@ for g = 1:num_groups
     % put scattered data underneath boxplots
     if confs.scatter==2
         uistack(sc(:,g),'bottom')
+    end   
+    
+    if confs.linkline==1
+       ln(g) = line(gpos(g,:),pt(4,:),'color',confs.colors(g,:),...
+           'LineStyle','-.','LineWidth',1.5); 
     end
     
 end
+
+% move lines to the background
+if confs.linkline==1
+    uistack(ln,'bottom')
+end
+
 
 % flip scatter and box colors and make a legend
 if confs.flipcolors==1    
@@ -338,6 +359,13 @@ else
     end
 end
 
+set(gca,'XTick',cpos,'box','off'); % remove condition ticks
+xlim([gpos(1)-3*box_width, gpos(end)+3*box_width]); % adjust x-axis margins
+
+if ~isempty(confs.conditions)
+    set(gca,'XTickLabels',confs.conditions,'XTick',cpos);
+end  
+
 handles.bx = bx; 
 handles.m  =  m;
 
@@ -351,13 +379,10 @@ end
 
 if exist('wh')
     handles.wh =  wh;
-end
+end  
 
-set(gca,'XTick',cpos,'box','off'); % remove condition ticks
-xlim([gpos(1)-3*box_width, gpos(end)+3*box_width]); % adjust x-axis margins
-
-if ~isempty(confs.conditions)
-    set(gca,'XTickLabels',confs.conditions,'XTick',cpos);
-end    
+if exist('ln')
+    handles.ln =  ln;
+end  
 
 end
