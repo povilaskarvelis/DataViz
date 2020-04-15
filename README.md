@@ -3,7 +3,7 @@ Data visualization functions for Matlab
 
 # daboxplot.m
 
-A lightweight function for visualizing 2-level factorial data (conditions x groups) using boxplots - something that the built-in Matlab boxplot function cannot do. Goes hand in hand with two-way ANOVA analysis. 
+A lightweight function for visualizing 2-level factorial data (conditions x groups) using boxplots - something that the built-in Matlab boxplot function cannot do. Goes hand in hand with two-way ANOVA tests. 
 
 - Created for 2-level factorial data, but also works with one-factor data
 - Easily customizable for emphasizing data features and maximizing readability
