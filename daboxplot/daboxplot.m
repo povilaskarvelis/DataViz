@@ -50,6 +50,8 @@ function handles = daboxplot(Y,varargin)
 %                     1 - on top of the boxplot 
 %                     2 - underneath the boxplot
 %
+%   'scattersize'     Size of the scatter markers. Default: 15
+%
 %   'scattercolors'   Colors for the scattered data: {face, edge}
 %                     Default: {'k','w'}
 %
