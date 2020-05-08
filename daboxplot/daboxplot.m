@@ -89,8 +89,12 @@ function handles = daboxplot(Y,varargin)
 %                     0 - no dash lines (default)
 %                     1 - dash lines
 %
-%   'conditions'      Xtick labels for conditions (a cell of chars)
-%                     Default: conditions are numbered in the input order.
+%   'xtlabels'        Xtick labels (a cell of chars) for conditions. If
+%                     there is only 1 condition and multiple groups, then 
+%                     xticks and xtlabels will automatically mark different
+%                     groups.
+%                     Default: conditions/groups are numbered in the input 
+%                     order
 %
 %   'legend'          Names of groups (a cell) for creating a legend
 %                     Default: no legend
@@ -142,7 +146,7 @@ addOptional(p, 'boxalpha', 1);
 addOptional(p, 'boxspacing', 1);
 addOptional(p, 'boxwidth', 1);
 addOptional(p, 'linkline',0);
-addOptional(p, 'conditions', []);
+addOptional(p, 'xtlabels', []);
 addOptional(p, 'legend', []);
 
 
@@ -193,16 +197,22 @@ num_locs = numel(cpos);
 
 % use condition positions to scale spacings
 gpos=[];
-if num_groups==1
-    gpos = cpos;
+if num_locs==1
+    gpos = (1:num_groups)';
     box_width = 1/3*confs.boxwidth;
-else
-    box_width = (2/3)/(num_groups+1)*confs.boxwidth;  % calculate box width 
-    loc_sp = box_width/3*confs.boxspacing; % local spacing between boxplots
-    
-    % set group positions for each group
-    for g = 1:num_groups
-        gpos = [gpos; cpos + (g-(num_groups+1)/2)*(box_width + loc_sp)];
+    cpos=gpos;
+else    
+    if num_groups==1
+        gpos = cpos;
+        box_width = 1/3*confs.boxwidth;
+    else
+        box_width = (2/3)/(num_groups+1)*confs.boxwidth;  % calculate box width 
+        loc_sp = box_width/3*confs.boxspacing; % local spacing between boxplots
+
+        % set group positions for each group
+        for g = 1:num_groups
+            gpos = [gpos; cpos + (g-(num_groups+1)/2)*(box_width + loc_sp)];
+        end
     end
 end
 
@@ -361,12 +371,13 @@ else
     end
 end
 
-set(gca,'XTick',cpos,'box','off'); % remove condition ticks
-xlim([gpos(1)-3*box_width, gpos(end)+3*box_width]); % adjust x-axis margins
-
-if ~isempty(confs.conditions)
-    set(gca,'XTickLabels',confs.conditions,'XTick',cpos);
+% set ticks and labels
+set(gca,'XTick',cpos,'XTickLabels',cpos,'box','off');
+if ~isempty(confs.xtlabels)
+    set(gca,'XTickLabels',confs.xtlabels,'XTick',cpos);
 end  
+
+xlim([gpos(1)-3*box_width, gpos(end)+3*box_width]); % adjust x-axis margins
 
 handles.bx = bx; 
 handles.m  =  m;
