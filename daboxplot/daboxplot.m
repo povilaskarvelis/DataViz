@@ -1,4 +1,4 @@
-function handles = daboxplot(Y,varargin)
+function h = daboxplot(Y,varargin)
 %DABOXPLOT draws neat boxplots for multiple groups and multiple conditions 
 %
 % Description:
@@ -11,8 +11,8 @@ function handles = daboxplot(Y,varargin)
 %
 %   daboxplot(Y)
 %   daboxplot(Y,param,val,...)
-%   handles = daboxplot(Y)
-%   handles = daboxplot(Y,param,val,...)
+%   h = daboxplot(Y)
+%   h = daboxplot(Y,param,val,...)
 %
 % Input Arguments:
 %
@@ -39,7 +39,7 @@ function handles = daboxplot(Y,varargin)
 %                     the edges being black. If boxplots are not filled,
 %                     these colors are used for edges. These colors can be 
 %                     also used for scatter data instead (see 'flipcolors')
-%                     Default colors: default matlab colors. 
+%                     Default colors: default matlab colors
 %   
 %   'whiskers'        Draws whiskers to show min and max data values after 
 %                     disregarding the outliers (see outlier description)
@@ -64,23 +64,30 @@ function handles = daboxplot(Y,varargin)
 %
 %   'jitter'          0 - do not jitter scattered data 
 %                     1 - jitter scattered data (default)
+%
+%   'mean'            0 - do not mark the mean (default)
+%                     1 - mark the mean with a dotted line
 % 
 %   'outliers'        Highlights the outliers in the plot. The outliers 
 %                     are values below Q1-1.5*IQR and above Q3+1.5*IQR.
 %                     0 - do not highlight outliers  
 %                     1 - highlight outliers (default)
 %
-%   'symbol'          Symbol and color for highlighting outliers.
+%   'outsymbol'       Symbol and color for highlighting outliers.
 %                     Default: 'rx' (red crosses).
 %
 %   'boxalpha'        Boxplot transparency (between 0 and 1)
 %                     Default: 1 (completely non-transparent)
 %
-%   'boxspacing'      Scales spacing between boxes in the same condition. 
-%                     Note that spacing is also dependent on box width
+%   'boxspacing'      A real number to scale spacing between boxes in the 
+%                     same condition. Note that negative values result in 
+%                     partially overlapping boxes within the same condition
 %                     Default: 1
 %
-%   'boxwidth'        Scales the width of all boxes
+%   'boxwidth'        A real number to scale the width of all boxes. Note 
+%                     that this also controls the spacing between different 
+%                     conditions (while spacings in the same condition are 
+%                     controlled by 'boxspacing')                      
 %                     Default: 1
 %
 %   'linkline'        Superimposes lines linking boxplots across conditions
@@ -102,14 +109,15 @@ function handles = daboxplot(Y,varargin)
 %
 % Output Arguments:
 %
-%   handles - a structure containing handles for further customization of
+%   h - a structure containing handles for further customization of
 %   the produced plot:
 %       cpos - condition positions
 %       gpos - group positions
 %       
 %       graphics objects:
 %       bx - boxplot box 
-%       m  - median line
+%       md - median line
+%       mn - mean line
 %       sc - scattered data markers
 %       ot - outlier markers
 %       wh - whiskers 
@@ -126,7 +134,7 @@ function handles = daboxplot(Y,varargin)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 
-handles = struct;
+h = struct;
 p = inputParser;
 
 % specify default options
@@ -140,8 +148,9 @@ addOptional(p, 'scattercolors', {'k','w'});
 addOptional(p, 'flipcolors', 0);
 addOptional(p, 'scatteralpha', 1); 
 addOptional(p, 'jitter', 1);
+addOptional(p, 'mean', 0);
 addOptional(p, 'outliers', 1); 
-addOptional(p, 'symbol', 'rx'); 
+addOptional(p, 'outsymbol', 'rx'); 
 addOptional(p, 'boxalpha', 1);
 addOptional(p, 'boxspacing', 1);
 addOptional(p, 'boxwidth', 1);
@@ -154,7 +163,7 @@ addOptional(p, 'legend', []);
 parse(p, varargin{:});
 confs = p.Results;    
 
-% get group indices and labels if 
+% get group indices and labels
 if ~isempty(confs.groups)
     [Gi,Gn,Gv] = grp2idx(confs.groups);
     num_groups = numel(Gv);
@@ -178,14 +187,14 @@ if iscell(Y)
     end    
     Y = y; % replace the cell with a data array
     
-elseif ismatrix(Y)     
+elseif ismatrix(Y) 
     % assume 1 group if none are specified
     if isempty(confs.groups)
        Gi = ones(size(Y,1),1);
        num_groups = 1;
-    end
-end
-
+    end       
+end    
+    
 % find condition positions
 if any(size(Y)==1)
     Y = Y(:);
@@ -207,7 +216,7 @@ else
         box_width = 1/3*confs.boxwidth;
     else
         box_width = (2/3)/(num_groups+1)*confs.boxwidth;  % calculate box width 
-        loc_sp = box_width/3*confs.boxspacing; % local spacing between boxplots
+        loc_sp = (box_width/3)*confs.boxspacing; % local spacing between boxplots
 
         % set group positions for each group
         for g = 1:num_groups
@@ -216,14 +225,15 @@ else
     end
 end
 
-handles.gpos = gpos;
-handles.cpos = cpos; 
+h.gpos = gpos;
+h.cpos = cpos; 
 
 % loop over groups
 for g = 1:num_groups 
     
     % get percentiles
     pt = prctile(Y(Gi==g,:),[2 9 25 50 75 91 98]); 
+    means = mean(Y(Gi==g,:));
     
     if size(pt,1)==1 pt=pt'; end % a fix for plotting one condition
     
@@ -238,7 +248,8 @@ for g = 1:num_groups
 
     box_ycor = [y75; y25];        
     box_xcor = reshape([x1; x2],2,[]); 
-    box_medcor = reshape([pt(4,:); pt(4,:)], 1, []);
+    box_mdcor = reshape([pt(4,:); pt(4,:)], 1, []);
+    box_mncor = reshape([means; means], 1, []);
     
     % create coordinates for drawing whiskers with cross-hatches and ends    
     hat_xcor = [gpos(g,:) - box_width/4; gpos(g,:) + box_width/4];    
@@ -262,51 +273,61 @@ for g = 1:num_groups
                 (box_width/3).*(0.5 - rand(numel(Y(Gi==g,k)),1));
         elseif confs.jitter==0
             xdata = gpos(g,k).*ones(numel(Y(Gi==g,k)),1);
-        end
-        
+        end        
 
         % index values for each box
-        win_k = (1:2)+2*(k-1);
-        Xx = box_xcor(1:2,win_k); 
-        Yy = box_ycor(1:2,win_k); 
+        wk = (1:2)+2*(k-1);
+        Xx = box_xcor(1:2,wk); 
+        Yy = box_ycor(1:2,wk); 
 
         % filled or not filled boxes
         if confs.fill==0            
             % no fill box
-            bx(k,g) = line([Xx(:,1)' Xx(1,:) Xx(:,2)' Xx(2,:)],...
+            h.bx(k,g) = line([Xx(:,1)' Xx(1,:) Xx(:,2)' Xx(2,:)],...
                 [Yy(:,1)' Yy(1,:) Yy(:,2)' Yy(2,:)],...
                 'color',confs.colors(g,:),'LineWidth',1.5); 
             hold on;        
             
-            % median
-            m(k,g) = line(Xx(1,:), box_medcor(win_k),...
-                'color',confs.colors(g,:), 'LineWidth', 2);
+            % draw the median
+            h.md(k,g) = line(Xx(1,:), box_mdcor(wk),...
+                'color',confs.colors(g,:), 'LineWidth', 2);            
+            
+            % draw the mean
+            if confs.mean==1
+                h.mn(k,g) = line(Xx(1,:),box_mncor(wk),'LineStyle',':',...
+                    'color',confs.colors(g,:),'LineWidth', 1.5);
+            end           
             
         elseif confs.fill==1
             % box filled with color 
-            bx(k,g) = fill([Xx(:,1)' Xx(1,:) Xx(:,2)' Xx(2,[2,1])],...
+            h.bx(k,g) = fill([Xx(:,1)' Xx(1,:) Xx(:,2)' Xx(2,[2,1])],...
                  [Yy(:,1)' Yy(1,:) Yy(:,2)' Yy(2,:)],confs.colors(g,:));            
-            set(bx(k,g),'FaceAlpha',confs.boxalpha); 
+            set(h.bx(k,g),'FaceAlpha',confs.boxalpha); 
             hold on;
 
             % draw the median
-            m(k,g) = line(Xx(1,:), box_medcor(win_k),...
+            h.md(k,g) = line(Xx(1,:), box_mdcor(wk),...
                 'color','k', 'LineWidth', 2);
-        end
+            
+            % draw the mean
+            if confs.mean==1
+                h.mn(k,g) = line(Xx(1,:),box_mncor(wk),'LineStyle',':',...
+                    'color','k','LineWidth', 1.5);
+            end
+        end        
         
         ox = data_vals>max(data_vals); % default - no outliers
         
         % draw outliers
         if confs.outliers==1            
-            ox = data_vals<whi_ycor(1,1,k) |  data_vals>whi_ycor(1,2,k);
-            ot(k,g) = scatter(xdata(ox),data_vals(ox),confs.scattersize,...
-                confs.symbol);            
-        end    
-        
+            ox = data_vals<whi_ycor(1,1,k) | data_vals>whi_ycor(1,2,k);
+            h.ot(k,g) = scatter(xdata(ox),data_vals(ox),confs.scattersize,...
+                confs.outsymbol);            
+        end        
         
         if confs.whiskers==1
             % draw whiskers
-            wh(k,g,:) = plot(whi_xcor(:,k),whi_ycor(:,1,k),'k-',... 
+            h.wh(k,g,:) = plot(whi_xcor(:,k),whi_ycor(:,1,k),'k-',... 
                 hat_xcor(:,k),[whi_ycor(1,1,k) whi_ycor(1,1,k)],'k-',... 
                 whi_xcor(:,k),whi_ycor(:,2,k),'k-',... 
                 hat_xcor(:,k),[whi_ycor(1,2,k) whi_ycor(1,2,k)],'k-',... 
@@ -315,7 +336,8 @@ for g = 1:num_groups
 
         % scatter on top of the boxplots
         if confs.scatter==1 || confs.scatter==2            
-            sc(k,g) = scatter(xdata(~ox),data_vals(~ox),confs.scattersize,...
+            h.sc(k,g) = scatter(xdata(~ox),data_vals(~ox),...
+                confs.scattersize,...
                 'MarkerFaceColor', confs.scattercolors{1},...
                 'MarkerEdgeColor', confs.scattercolors{2},...
                 'MarkerFaceAlpha', confs.scatteralpha); 
@@ -326,11 +348,11 @@ for g = 1:num_groups
         
     % put scattered data underneath boxplots
     if confs.scatter==2
-        uistack(sc(:,g),'bottom')
+        uistack(h.sc(:,g),'bottom')
     end   
     
     if confs.linkline==1
-       ln(g) = line(gpos(g,:),pt(4,:),'color',confs.colors(g,:),...
+       h.ln(g) = line(gpos(g,:),pt(4,:),'color',confs.colors(g,:),...
            'LineStyle','-.','LineWidth',1.5); 
     end
     
@@ -338,36 +360,44 @@ end
 
 % move lines to the background
 if confs.linkline==1
-    uistack(ln,'bottom')
+    uistack(h.ln,'bottom')
 end
 
 
 % flip scatter and box colors and make a legend
 if confs.flipcolors==1    
     
-    box_class = class(bx); % box filled or no
+    box_class = class(h.bx); % box filled or no
     
     if strcmp(box_class,'matlab.graphics.primitive.Patch')
-        set(bx,'FaceColor',confs.scattercolors{1});
-        set(m,'Color',confs.scattercolors{2});
+        set(h.bx,'FaceColor',confs.scattercolors{1});
+        set(h.md,'Color',confs.scattercolors{2});
+        
+        if confs.mean==1
+            set(h.mn,'Color',confs.scattercolors{2});
+        end
     else
-        set(bx,'Color',confs.scattercolors{1});
-        set(m,'Color',confs.scattercolors{1});
+        set(h.bx,'Color',confs.scattercolors{1});
+        set(h.md,'Color',confs.scattercolors{1});
+        
+        if confs.mean==1
+            set(h.mn,'Color',confs.scattercolors{1});
+        end
     end
 
     for g = 1:num_groups
-       set(sc(:,g),'MarkerFaceColor',confs.colors(g,:))
+       set(h.sc(:,g),'MarkerFaceColor',confs.colors(g,:))
     end
     
     % add a legend based on scatter colors
     if ~isempty(confs.legend)
-        handles.lg = legend(sc(1,:),confs.legend);
+        h.lg = legend(h.sc(1,:),confs.legend);
     end
 else
     
     % add a legend based on box colors
     if ~isempty(confs.legend)
-        handles.lg = legend(bx(1,:),confs.legend);
+        h.lg = legend(h.bx(1,:),confs.legend);
     end
 end
 
@@ -378,24 +408,5 @@ if ~isempty(confs.xtlabels)
 end  
 
 xlim([gpos(1)-3*box_width, gpos(end)+3*box_width]); % adjust x-axis margins
-
-handles.bx = bx; 
-handles.m  =  m;
-
-if exist('sc')
-    handles.sc = sc;
-end
-
-if exist('ot')
-    handles.ot = ot;
-end
-
-if exist('wh')
-    handles.wh =  wh;
-end  
-
-if exist('ln')
-    handles.ln =  ln;
-end  
 
 end

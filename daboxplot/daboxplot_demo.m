@@ -13,10 +13,21 @@ data1{2} = randn([60,4]); % Dogs
 data1{3} = randn([60,4]); % God
 data1{4} = randn([60,4]); % Potato
 
-% data in a matrix (+ grouping indices)
+% data in a numreic array (+ grouping indices)
 data2 = [randn([30,4]); randn([30,4]);...
          randn([30,4]); randn([30,4])];
-group_inx = [ones(1,30), 2.*ones(1,30) 3.*ones(1,30) 4.*ones(1,30)];
+group_inx = [ones(1,30), 2.*ones(1,30), 3.*ones(1,30), 4.*ones(1,30)];
+
+% skewed data in a numeric array (+ group indices)
+data3 = [pearsrnd(0,1,-1,5,25,1); pearsrnd(0,1,-2,7,25,1); ...
+    pearsrnd(0,1,1,8,25,1)];
+group_inx2 = [ones(1,25), 2.*ones(1,25), 3.*ones(1,25)];
+
+
+% data with group differences in a cell array
+data4{1} = randn([60,3]) + (0:0.5:1);          % Humans
+data4{2} = randn([60,3]) + (2:2:6);            % Dogs
+
 
 group_names = {'Humans', 'Dogs' , 'God', 'Potato'};
 condition_names = {'Water', 'Land', 'Moon', 'Hyperspace'};
@@ -28,7 +39,6 @@ c =  [0.45, 0.80, 0.69;...
       0.90, 0.70, 0.30];  
    
 figure('Name', 'daboxplot_demo','WindowStyle','docked');
-pause(0.5); % prevents a glitch in xlim; don't ask me why
 
 % default boxplots for one group and three conditions 
 subplot(3,3,1)
@@ -36,16 +46,16 @@ h = daboxplot(data2(:,1:3),'groups',group_inx(1:30));
 
 % non-filled boxplots and cutomized medians
 subplot(3,3,2)
-h = daboxplot(data2(:,1:3),'groups',group_inx(1:60),'symbol','kx',...
+h = daboxplot(data2(:,1:3),'groups',group_inx(1:60),'outsymbol','kx',...
     'xtlabels', condition_names,'fill',0,'legend',group_names(1:2));
 ylabel('Performance');
-xl = xlim; xlim([xl(1), xl(2)+1]);    % make more space for the legend
-set(h.m,'Color','k','LineWidth',1.5); % customize median lines
+xl = xlim; xlim([xl(1), xl(2)+1]);     % make more space for the legend
+set(h.md,'Color','k','LineWidth',1.5); % customize median lines
 
 
 % filled boxplots, different color scheme, non-jittered scatter underneath
 subplot(3,3,3)
-h = daboxplot(data2(:,1:3),'groups',group_inx(1:90),'symbol','k+',...
+h = daboxplot(data2(:,1:3),'groups',group_inx(1:90),'outsymbol','k+',...
     'xtlabels', condition_names,'legend',group_names(1:3),'color',c,...
     'whiskers',0,'scatter',2,'jitter',0,'scattersize',13);
 ylabel('Performance');
@@ -65,7 +75,7 @@ set(gca,'FontSize',9);
 % different color scheme, a color flip, different outlier symbol
 subplot(3,2,4)
 h = daboxplot(data2,'groups',group_inx,'xtlabels', condition_names,...
-    'colors',c,'fill',0,'whiskers',0,'scatter',2,'symbol','k*',...
+    'colors',c,'fill',0,'whiskers',0,'scatter',2,'outsymbol','k*',...
     'outliers',1,'scattersize',16,'flipcolors',1,'boxspacing',1.2,...
     'legend',group_names); 
 ylabel('Performance');
@@ -84,10 +94,21 @@ set(gca,'FontSize',9.5);
 xl = xlim; xlim([xl(1), xl(2)+0.2]);    % make more space for the legend
 
 
+%--------------------------------------------------------------------------
+figure('Name', 'daboxplot_demo2','WindowStyle','docked');
+
+% three groups, one condition, indicating means with dotted lines
+subplot(2,2,1)
+h = daboxplot(data3,'groups',group_inx2,'mean',1,'color',c,...
+    'xtlabels',group_names);
+ylabel('Performance');
+
+% using linkline to emphasize interaction effects (group*condition)
+subplot(2,2,2)
+h = daboxplot(data4,'linkline',1,...
+    'xtlabels', condition_names,'legend',group_names(1:3),...
+    'whiskers',0,'outliers',1,'outsymbol','r*','scatter',2,'boxalpha',0.6);
+ylabel('Performance'); ylim([-2.5 8.8]);
+xl = xlim; xlim([xl(1), xl(2)]);    % make more space for the legend
+
 % TIP: to make the plots vertical use camroll(-90)
-
-
-
-
-
-
