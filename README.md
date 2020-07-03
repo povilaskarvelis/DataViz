@@ -12,7 +12,7 @@ A lightweight function for visualizing 2-level factorial data (conditions x grou
 - Exports many handles for further customization
 - Fairly neat
 
-The examples below illustrate most of the functinality and options (see daboxplot_demo.m for the code).
+The examples below illustrate most of the functionality and options (see daboxplot_demo.m for the code).
 
 ![](daboxplot/daboxplot_examples.png)
 
