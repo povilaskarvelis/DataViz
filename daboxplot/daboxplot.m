@@ -3,9 +3,10 @@ function h = daboxplot(Y,varargin)
 %
 % Description:
 %
-%   Creates boxplots organized by condition and colored by group. Does not
-%   require the groups to be of the same size. Has some essential options
-%   (see below) and exports the main handles for further customization. 
+%   Creates boxplots organized by condition and colored by group. Supports 
+%   various options such as scatter, transparency, outliers, mean and 
+%   group linking lines, scaling, etc, to maximize data readability. See 
+%   daboxplot_demo. for examples of the use and functionality.  
 %
 % Syntax:
 %
