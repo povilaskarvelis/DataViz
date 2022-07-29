@@ -107,6 +107,10 @@ function h = daboxplot(Y,varargin)
 %   'legend'          Names of groups (a cell) for creating a legend
 %                     Default: no legend
 %
+%   'outlierfactor'   Multiple of the interquartile range used to find
+%                     outliers. Outliers are values below 
+%                     Q1-outlierfactor*IQR and above Q3+outlierfactor*IQR
+%                     Default: 1.5
 %
 % Output Arguments:
 %
@@ -158,6 +162,7 @@ addOptional(p, 'boxwidth', 1);
 addOptional(p, 'linkline',0);
 addOptional(p, 'xtlabels', []);
 addOptional(p, 'legend', []);
+addOptional(p, 'outlierfactor', 1.5);
 
 
 % parse the input options
@@ -262,8 +267,8 @@ for g = 1:num_groups
         data_vals = Y(Gi==g,k); % data for a single box
         
         % determine outliers and whisker length 
-        ol = data_vals<(pt(3,k)-IQR(k)); % indices of lower outliers
-        ou = data_vals>(pt(5,k)+IQR(k)); % indices of upper outliers    
+        ol = data_vals<(pt(3,k)-confs.outlierfactor*IQR(k)); % indices of lower outliers
+        ou = data_vals>(pt(5,k)+confs.outlierfactor*IQR(k)); % indices of upper outliers    
 
         whi_ycor(:,1,k) = [min(data_vals(~ol)), pt(3,k)]; % lower whisker        
         whi_ycor(:,2,k) = [max(data_vals(~ou)), pt(5,k)]; % upper whisker        
