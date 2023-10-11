@@ -35,6 +35,7 @@ The examples below illustrate most of the functionality and options (see daboxpl
 The below examples illustrate more recently added options:
 - Indicate means on each box (to show skewness)
 - Link the boxes within each group (to emphasize interaction effects)
+- Link datapoints across conditions (to emphasize within-individual effects)
 
 ![](daboxplot/daboxplot_examples2.png)
 
