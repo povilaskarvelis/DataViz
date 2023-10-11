@@ -41,7 +41,7 @@ The below examples illustrate more recently added options:
 
 ## dabarplot.m
 
-**dabarplot** is the third best option for highlighting data distribution properties. However, it still encourages to add error bars (you can choose between standard error, within-subject error, or standard deviation) and jittered data. Overall, it is still best suited for situations where visualizing data distribution is not as important, when the emphasis is not on hypothesis testing and statistical significance, but on the effect size. Using stacked plots and adding number values to the plot can be particularly effective in conveying effect sizes. 
+**dabarplot** is the third best option for highlighting data distribution properties. However, it still encourages to add error bars (you can choose between standard error, within-subject error, or standard deviation) and jittered data. Overall, it is still best suited for situations where visualizing data distribution is not as important, when the emphasis is not on hypothesis testing and statistical significance but on the effect size. Using stacked plots and adding number values to the plot can be particularly effective in conveying effect sizes among conditions or among groups.  
 
 The examples below illustrate most of the functionality and options (see dabarplot_demo.m for the code).
 
