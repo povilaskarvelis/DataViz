@@ -1,10 +1,11 @@
-%DABOXPLOT_DEMO a few examples of DABOXPLOT functionality 
+% daboxplot_demo a few examples of daboxplot functionality 
 %
-% Povilas Karvelis <karvelis.povilas@gmail.com>
+% Povilas Karvelis
 % 15/04/2019
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+clear all
 rng('default')
 
 % data in a cell array 
@@ -23,11 +24,9 @@ data3 = [pearsrnd(0,1,-1,5,25,1); pearsrnd(0,1,-2,7,25,1); ...
     pearsrnd(0,1,1,8,25,1)];
 group_inx2 = [ones(1,25), 2.*ones(1,25), 3.*ones(1,25)];
 
-
 % data with group differences in a cell array
 data4{1} = randn([60,3]) + (0:0.5:1);          % Humans
 data4{2} = randn([60,3]) + (2:2:6);            % Dogs
-
 
 group_names = {'Humans', 'Dogs' , 'God', 'Potato'};
 condition_names = {'Water', 'Land', 'Moon', 'Hyperspace'};
@@ -42,7 +41,7 @@ figure('Name', 'daboxplot_demo','WindowStyle','docked');
 
 % default boxplots for one group and three conditions 
 subplot(3,3,1)
-h = daboxplot(data2(:,1:3),'groups',group_inx(1:30));
+h = dabarplot(data2(:,1:3),'groups',group_inx(1:30));
 
 % non-filled boxplots and cutomized medians
 subplot(3,3,2)
@@ -98,17 +97,25 @@ xl = xlim; xlim([xl(1), xl(2)+0.2]);    % make more space for the legend
 figure('Name', 'daboxplot_demo2','WindowStyle','docked');
 
 % three groups, one condition, indicating means with dotted lines
-subplot(2,2,1)
+subplot(2,3,1)
 h = daboxplot(data3,'groups',group_inx2,'mean',1,'color',c,...
     'xtlabels',group_names);
 ylabel('Performance');
+set(gca,'FontSize',12)
 
 % using linkline to emphasize interaction effects (group*condition)
-subplot(2,2,2)
+subplot(2,3,2)
 h = daboxplot(data4,'linkline',1,...
     'xtlabels', condition_names,'legend',group_names(1:3),...
     'whiskers',0,'outliers',1,'outsymbol','r*','scatter',2,'boxalpha',0.6);
 ylabel('Performance'); ylim([-2.5 8.8]);
 xl = xlim; xlim([xl(1), xl(2)]);    % make more space for the legend
+set(gca,'FontSize',12)
+
+% using withinline to emphasize within group differences between conditions
+subplot(2,3,3)
+h = daboxplot(data4{1}(:,1:2),'xtlabels', condition_names(1:2),'whiskers',0,...
+    'scatter',1,'scattersize',25,'scatteralpha',0.6,'withinlines',1,'outliers',0);
+set(gca,'FontSize',12)
 
 % TIP: to make the plots vertical use camroll(-90)

@@ -1,5 +1,5 @@
 function h = daboxplot(Y,varargin)
-%DABOXPLOT draws neat boxplots for multiple groups and multiple conditions 
+% daboxplot draws neat boxplots for multiple groups and multiple conditions 
 %
 % Description:
 %
@@ -74,6 +74,11 @@ function h = daboxplot(Y,varargin)
 %                     0 - do not highlight outliers  
 %                     1 - highlight outliers (default)
 %
+%   'outfactor'       Multiple of the interquartile range used to find
+%                     outliers: below Q1-outfactor*IQR and above 
+%                     Q3+outfactor*IQR
+%                     Default: 1.5
+%
 %   'outsymbol'       Symbol and color for highlighting outliers.
 %                     Default: 'rx' (red crosses).
 %
@@ -97,6 +102,12 @@ function h = daboxplot(Y,varargin)
 %                     0 - no dash lines (default)
 %                     1 - dash lines
 %
+%   'withinlines'     Draws a line between each pair of data points in 
+%                     paired datasets. Meant to be used only when plotting
+%                     one group.
+%                     0 - no lines (default)
+%                     1 - lines
+%
 %   'xtlabels'        Xtick labels (a cell of chars) for conditions. If
 %                     there is only 1 condition and multiple groups, then 
 %                     xticks and xtlabels will automatically mark different
@@ -107,10 +118,6 @@ function h = daboxplot(Y,varargin)
 %   'legend'          Names of groups (a cell) for creating a legend
 %                     Default: no legend
 %
-%   'outlierfactor'   Multiple of the interquartile range used to find
-%                     outliers. Outliers are values below 
-%                     Q1-outlierfactor*IQR and above Q3+outlierfactor*IQR
-%                     Default: 1.5
 %
 % Output Arguments:
 %
@@ -131,13 +138,13 @@ function h = daboxplot(Y,varargin)
 %
 %
 % For examples have a look at daboxplot_demo.m
+% Also see: daviolinplot.m and dabarplot.m
 %
 %
-% Povilas Karvelis <karvelis.povilas@gmail.com>
+% Povilas Karvelis
 % 15/04/2019
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
 
 h = struct;
 p = inputParser;
@@ -155,15 +162,15 @@ addOptional(p, 'scatteralpha', 1);
 addOptional(p, 'jitter', 1);
 addOptional(p, 'mean', 0);
 addOptional(p, 'outliers', 1); 
+addOptional(p, 'outfactor', 1.5);
 addOptional(p, 'outsymbol', 'rx'); 
 addOptional(p, 'boxalpha', 1);
 addOptional(p, 'boxspacing', 1);
 addOptional(p, 'boxwidth', 1);
 addOptional(p, 'linkline',0);
+addOptional(p, 'withinlines',0);
 addOptional(p, 'xtlabels', []);
 addOptional(p, 'legend', []);
-addOptional(p, 'outlierfactor', 1.5);
-
 
 % parse the input options
 parse(p, varargin{:});
@@ -241,7 +248,7 @@ for g = 1:num_groups
     pt = prctile(Y(Gi==g,:),[2 9 25 50 75 91 98]); 
     means = mean(Y(Gi==g,:));
     
-    if size(pt,1)==1 pt=pt'; end % a fix for plotting one condition
+    if size(pt,1)==1 pt=pt'; end % for plotting one condition
     
     IQR = (pt(5,:)-pt(3,:));
         
@@ -267,8 +274,8 @@ for g = 1:num_groups
         data_vals = Y(Gi==g,k); % data for a single box
         
         % determine outliers and whisker length 
-        ol = data_vals<(pt(3,k)-confs.outlierfactor*IQR(k)); % indices of lower outliers
-        ou = data_vals>(pt(5,k)+confs.outlierfactor*IQR(k)); % indices of upper outliers    
+        ol = data_vals<(pt(3,k)-confs.outfactor*IQR(k)); % indices of lower outliers
+        ou = data_vals>(pt(5,k)+confs.outfactor*IQR(k)); % indices of upper outliers    
 
         whi_ycor(:,1,k) = [min(data_vals(~ol)), pt(3,k)]; % lower whisker        
         whi_ycor(:,2,k) = [max(data_vals(~ou)), pt(5,k)]; % upper whisker        
@@ -280,6 +287,9 @@ for g = 1:num_groups
         elseif confs.jitter==0
             xdata = gpos(g,k).*ones(numel(Y(Gi==g,k)),1);
         end        
+
+        % store data in case it's needed for withinlines
+        scdata(:,:,k,g) = [xdata, data_vals];
 
         % index values for each box
         wk = (1:2)+2*(k-1);
@@ -329,10 +339,10 @@ for g = 1:num_groups
             ox = data_vals<whi_ycor(1,1,k) | data_vals>whi_ycor(1,2,k);
             h.ot(k,g) = scatter(xdata(ox),data_vals(ox),confs.scattersize,...
                 confs.outsymbol);            
-        end        
-        
-        if confs.whiskers==1
-            % draw whiskers
+        end
+
+        % draw whiskers
+        if confs.whiskers==1            
             h.wh(k,g,:) = plot(whi_xcor(:,k),whi_ycor(:,1,k),'k-',... 
                 hat_xcor(:,k),[whi_ycor(1,1,k) whi_ycor(1,1,k)],'k-',... 
                 whi_xcor(:,k),whi_ycor(:,2,k),'k-',... 
@@ -347,20 +357,43 @@ for g = 1:num_groups
                 'MarkerFaceColor', confs.scattercolors{1},...
                 'MarkerEdgeColor', confs.scattercolors{2},...
                 'MarkerFaceAlpha', confs.scatteralpha); 
-            hold on;    
+            hold on; 
+            
         end        
         
     end        
-        
-    % put scattered data underneath boxplots
-    if confs.scatter==2
-        uistack(h.sc(:,g),'bottom')
-    end   
-    
+ 
+    % link the medians of the boxplots with a line
     if confs.linkline==1
        h.ln(g) = line(gpos(g,:),pt(4,:),'color',confs.colors(g,:),...
            'LineStyle','-.','LineWidth',1.5); 
     end
+    
+    % link individual within group data points
+    if confs.withinlines==1
+        for s = 1:size(scdata,1)                
+            h.wl(g) = plot(squeeze(scdata(s,1,:,g)),...
+                squeeze(scdata(s,2,:,g)),'color', [0.8 0.8 0.8]);
+            uistack(h.wl(g),'bottom')
+        end
+    end
+
+    % put scattered data underneath boxplots
+    if confs.scatter==1        
+        if confs.mean==1
+            uistack(h.mn(:,g),'bottom')
+        end
+
+        uistack(h.md(:,g),'bottom')
+        uistack(h.bx(:,g),'bottom')
+        
+        if confs.whiskers==1
+            uistack(h.wh(:,g,:),'bottom')        
+        end       
+
+    elseif confs.scatter==2
+        uistack(h.sc(:,g),'bottom')
+    end 
     
 end
 
