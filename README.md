@@ -32,7 +32,7 @@ The examples below illustrate most of the functionality and options (see _daboxp
 
 ![](daboxplot/daboxplot_examples.png)
 
-The below examples illustrate more recently added options:
+The examples below illustrate more recently added options:
 - Indicate means on each box (to show skewness)
 - Link the boxes within each group (to emphasize interaction effects)
 - Link datapoints across conditions (to emphasize within-individual effects)
@@ -42,7 +42,7 @@ The below examples illustrate more recently added options:
 
 ## dabarplot.m
 
-**_dabarplot_** is the worst option for highlighting data distribution properties. However, it still encourages to add error bars (you can choose between standard error, within-subject error, or standard deviation) and allows jittered data. Overall, it is best suited for situations where visualizing data distribution is not as important, when the emphasis is not on hypothesis testing and statistical significance but on the effect size. Using stacked bars and adding number values on top of them can be particularly effective in conveying effect sizes among conditions or among groups.  
+**_dabarplot_** is the least ideal for highlighting data distribution properties. However, it still encourages to add error bars (you can choose between standard error, within-subject error, or standard deviation) and allows overlying scattered data. Overall, it is best suited for situations where visualizing data distribution is not as important, when the emphasis is not on hypothesis testing and statistical significance but on the effect size. Using stacked bars and adding number values on top of them can be particularly effective in conveying effect sizes among conditions or among groups.  
 
 The examples below illustrate most of the functionality and options (see _dabarplot_demo.m_ for the code).
 
