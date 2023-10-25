@@ -41,7 +41,7 @@ figure('Name', 'daboxplot_demo','WindowStyle','docked');
 
 % default boxplots for one group and three conditions 
 subplot(3,3,1)
-h = dabarplot(data2(:,1:3),'groups',group_inx(1:30));
+h = daboxplot(data2(:,1:3),'groups',group_inx(1:30));
 
 % non-filled boxplots and cutomized medians
 subplot(3,3,2)
@@ -114,7 +114,7 @@ set(gca,'FontSize',12)
 
 % using withinline to emphasize within group differences between conditions
 subplot(2,3,3)
-h = daboxplot(data4{1}(:,1:2),'xtlabels', condition_names(1:2),'whiskers',0,...
+h = daviolinplot(data4{1}(:,1:2),'xtlabels', condition_names(1:2),'whiskers',0,...
     'scatter',1,'scattersize',25,'scatteralpha',0.6,'withinlines',1,'outliers',0);
 set(gca,'FontSize',12)
 

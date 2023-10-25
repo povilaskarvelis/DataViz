@@ -122,6 +122,12 @@ function h = daviolinplot(Y,varargin)
 %                     0 - no dash lines (default)
 %                     1 - dash lines
 %
+%   'withinlines'     Draws a line between each pair of data points in 
+%                     paired datasets. Meant to be used only when plotting
+%                     one group.
+%                     0 - no lines (default)
+%                     1 - lines
+%
 %   'xtlabels'        Xtick labels (a cell of chars) for conditions. If
 %                     there is only 1 condition and multiple groups, then 
 %                     xticks and xtlabels will automatically mark different
@@ -187,6 +193,7 @@ addOptional(p, 'boxalpha', 1);
 addOptional(p, 'boxspacing', 1);
 addOptional(p, 'boxwidth', 1);
 addOptional(p, 'linkline',0);
+addOptional(p, 'withinlines',0);
 addOptional(p, 'xtlabels', []);
 addOptional(p, 'legend', []);
 
@@ -375,8 +382,7 @@ for g = 1:num_groups
                 
                 % determine outliers and whisker length 
                 ol = data_vals<(pt(3,k)-confs.outfactor*IQR(k)); % indices of lower outliers
-                ou = data_vals>(pt(5,k)+confs.outfactor*IQR(k)); % indices of upper outliers    
-
+                ou = data_vals>(pt(5,k)+confs.outfactor*IQR(k)); % indices of upper outliers  
 
                 whi_ycor(:,1,k) = [min(data_vals(~ol)), pt(3,k)]; % lowhisk        
                 whi_ycor(:,2,k) = [max(data_vals(~ou)), pt(5,k)]; % upwhisk
@@ -389,7 +395,6 @@ for g = 1:num_groups
         end
         
         ox = data_vals>max(data_vals); % default - no outliers        
-        
         
         % jitter or not
         if confs.jitter==0
@@ -432,6 +437,9 @@ for g = 1:num_groups
         elseif confs.scatter==3
                 xdata = xdata + box_width;            
         end
+
+        % store data in case it's needed for withinlines
+        scdata{g}(:,:,k) = [xdata, data_vals];
         
         % draw outliers
         if confs.outliers==1    
@@ -463,7 +471,15 @@ for g = 1:num_groups
        h.ln(g) = line(gpos(g,:),pt(4,:),'color',confs.colors(g,:),...
            'LineStyle','-.','LineWidth',1.5); 
     end
-    
+
+    % link individual within group data points
+    if confs.withinlines==1
+        for s = 1:size(scdata{g},1)                
+            h.wl(g) = plot(squeeze(scdata{g}(s,1,:)),...
+                squeeze(scdata{g}(s,2,:)),'color', [0.8 0.8 0.8]);
+            uistack(h.wl(g),'bottom')
+        end
+    end
 end
 
 % move lines to the background

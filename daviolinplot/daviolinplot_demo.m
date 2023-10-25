@@ -97,5 +97,3 @@ xl = xlim; xlim([xl(1)-0.1, xl(2)+0.3]); % make more space for the legend
 set(h.sc,'MarkerEdgeColor','none');      % remove marker edge color
 set(gca,'FontSize',10);
 
-
-

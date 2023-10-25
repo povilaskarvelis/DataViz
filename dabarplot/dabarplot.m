@@ -1,5 +1,5 @@
 function h = dabarplot(Y,varargin)
-%dabarplot draws neat bars for multiple groups and multiple conditions 
+% dabarplot draws neat bars for multiple groups and multiple conditions 
 %
 % Description:
 %
@@ -209,19 +209,24 @@ num_locs = numel(cpos);
 % use condition positions to scale spacings
 gpos = [];
 if num_locs==1
-    gpos      = (1:num_groups)';
+    if strcmp(confs.bartype,'grouped')
+        gpos      = (1:num_groups)';
+        cpos      = gpos;
+    elseif strcmp(confs.bartype,'stacked')
+        for g = 1:num_groups
+            gpos = [gpos;cpos];
+        end
+    end    
     bar_width = 4/5*confs.barwidth;
-    cpos      = gpos;
 else    
     if num_groups==1
         gpos      = cpos;
         bar_width = 4/5*confs.barwidth;
     else
-        bar_width = (2/3)/(num_groups+1)*confs.barwidth;  % bar width 
-        loc_sp    = (bar_width/3)*confs.barspacing; % local spacing of bars
-
         % set group positions for each group
         if strcmp(confs.bartype,'grouped')
+            bar_width = (2/3)/(num_groups+1)*confs.barwidth;  % bar width 
+            loc_sp    = (bar_width/3)*confs.barspacing; % local spacing of bars
             for g = 1:num_groups
                 gpos = [gpos; cpos + (g-(num_groups+1)/2)*(bar_width + loc_sp)];
             end
@@ -244,7 +249,6 @@ if ~strcmp(confs.bartype,'grouped')
     confs.jitter    = 0;
     confs.outiers   = 0;
 end
-
 
 % loop over groups
 for g = 1:num_groups 

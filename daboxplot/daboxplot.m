@@ -289,7 +289,7 @@ for g = 1:num_groups
         end        
 
         % store data in case it's needed for withinlines
-        scdata(:,:,k,g) = [xdata, data_vals];
+        scdata{g}(:,:,k) = [xdata, data_vals];
 
         % index values for each box
         wk = (1:2)+2*(k-1);
@@ -371,9 +371,9 @@ for g = 1:num_groups
     
     % link individual within group data points
     if confs.withinlines==1
-        for s = 1:size(scdata,1)                
-            h.wl(g) = plot(squeeze(scdata(s,1,:,g)),...
-                squeeze(scdata(s,2,:,g)),'color', [0.8 0.8 0.8]);
+        for s = 1:size(scdata{g},1)                
+            h.wl(g) = plot(squeeze(scdata{g}(s,1,:)),...
+                squeeze(scdata{g}(s,2,:)),'color', [0.8 0.8 0.8]);
             uistack(h.wl(g),'bottom')
         end
     end
@@ -401,7 +401,6 @@ end
 if confs.linkline==1
     uistack(h.ln,'bottom')
 end
-
 
 % flip scatter and box colors and make a legend
 if confs.flipcolors==1    
