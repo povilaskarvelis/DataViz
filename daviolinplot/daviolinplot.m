@@ -443,7 +443,8 @@ for g = 1:num_groups
         
         % draw outliers
         if confs.outliers==1    
-            ox = data_vals<(pt(3,k)-IQR(k)) |  data_vals>(pt(5,k)+IQR(k));
+            ox = data_vals<(pt(3,k)-confs.outfactor*IQR(k)) | ...
+                 data_vals>(pt(5,k)+confs.outfactor*IQR(k));
             h.ot(k,g) = scatter(xdata(ox),data_vals(ox),confs.scattersize,...
                 confs.outsymbol);    
         end            
