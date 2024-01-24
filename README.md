@@ -15,7 +15,7 @@ All three functions:
 
 ## daviolinplot.m 
 
-**_daviolinplot_** is the best option for highlighitng data distribution properties. It combines boxplots, kernel density, and data scatter to produce different hybrids of violin plots, half-violin plots, raincloud plots, and dotplots. Kernel density highlights the overall shape of the data distribution, pertinent for the normality assumption. Dotplots, while similar in that regard, but also they convey information about the exact number of datapoints across the distribution. 
+**_daviolinplot_** is the best option for highlighitng data distribution properties. It combines boxplots, kernel density, and data scatter to produce different hybrids of violin plots, half-violin plots, raincloud plots, and dotplots. Kernel density highlights the overall shape of the data distribution, pertinent for the normality assumption. Dotplots, while similar in that regard, also they convey information about the exact number of datapoints across the distribution. 
 
 Note: dotplots usually require some tweaking to make them look presentable. You may have to play around with bin number ('_bins_') and marker size ('_scattersize_') to make it look right.
 
