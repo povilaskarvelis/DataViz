@@ -1,6 +1,6 @@
 # DataViz
 
-Some data visualization functions for Matlab.
+Statistical visualization functions for Matlab.
 
 ## Functions for visualizing 2-level factorial data (conditions x groups)
 
