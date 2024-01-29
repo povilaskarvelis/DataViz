@@ -4,7 +4,7 @@ Some data visualization functions for Matlab.
 
 ## Functions for visualizing 2-level factorial data (conditions x groups)
 
-**_daviolinplot_**, **_daboxplot_**, and **_dabarplot_** are lightweight plotting functions designed to address the limitations of Matlab's built-in tools and to encourage good data visualization practices (by highlighting features of the data crucial for assessing both its quality and the information it conveys). 
+**_daviolinplot_**, **_daboxplot_**, and **_dabarplot_** are lightweight statistical visualization functions designed to address the limitations of Matlab's built-in tools and to encourage good data visualization practices (by highlighting features of the data crucial for assessing both its quality and the information it conveys). 
 
 All three functions: 
 - Are created for 2-level factorial data but also work with one-factor data
