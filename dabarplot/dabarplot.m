@@ -256,10 +256,10 @@ for g = 1:num_groups
     % get means of each condition
     means   = nanmean(Y(Gi==g,:),1);   
     
-    if confs.errorbars~=0
+    if ischar(confs.errorbars) && strcmp(confs.bartype,'grouped')
         if confs.errorbars == "WSE"
-            Yad   = Y(Gi==g,:) - repmat(nanmean(Y(Gi==g,:), 2), [1, size(Y(Gi==g,:),2)]);
-            er   = nanstd(Yad)/sqrt(size(Y(Gi==g,:),1));
+            Yad = Y(Gi==g,:) - repmat(nanmean(Y(Gi==g,:), 2), [1, size(Y(Gi==g,:),2)]);
+            er  = nanstd(Yad)/sqrt(size(Y(Gi==g,:),1));
         elseif confs.errorbars == "SE"
             er = nanstd(Y(Gi==g,:),[],1)/sqrt(size(Y(Gi==g,:),1));
         elseif confs.errorbars == "SD"
@@ -317,7 +317,7 @@ for g = 1:num_groups
         
         data_vals = Y(Gi==g,k); % data for a single bar
         
-        if confs.errorbars ~= 0
+        if ischar(confs.errorbars) && strcmp(confs.bartype,'grouped')
             whi_ycor(:,1,k) = [means(k)-er(k), means(k)]; % lower whisker        
             whi_ycor(:,2,k) = [means(k)+er(k), means(k)]; % upper whisker
         end
@@ -369,7 +369,7 @@ for g = 1:num_groups
         end        
         
         % draw error bars
-        if confs.errorbars~=0
+        if ischar(confs.errorbars) && strcmp(confs.bartype,'grouped')
             if confs.errorhats==1
                 h.wh(k,g,:) = plot(whi_xcor(:,k),whi_ycor(:,1,k),'k-',... 
                     hat_xcor(:,k),[whi_ycor(1,1,k) whi_ycor(1,1,k)],'k-',... 

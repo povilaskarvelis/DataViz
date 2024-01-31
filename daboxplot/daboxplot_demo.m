@@ -114,7 +114,7 @@ set(gca,'FontSize',12)
 
 % using withinline to emphasize within group differences between conditions
 subplot(2,3,3)
-h = daviolinplot(data4{1}(:,1:2),'xtlabels', condition_names(1:2),'whiskers',0,...
+h = daboxplot(data4{1}(:,1:2),'xtlabels', condition_names(1:2),'whiskers',0,...
     'scatter',1,'scattersize',25,'scatteralpha',0.6,'withinlines',1,'outliers',0);
 set(gca,'FontSize',12)
 
