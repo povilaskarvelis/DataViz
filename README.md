@@ -1,4 +1,6 @@
-# DataViz
+# DataViz 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12749045.svg)](https://doi.org/10.5281/zenodo.12749045)
+
 
 Statistical visualization functions for Matlab.
 
