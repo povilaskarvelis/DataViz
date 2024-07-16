@@ -26,7 +26,7 @@ The examples below illustrate most of the functionality and options (see _daviol
 
 ## daboxplot.m
 
-**_daboxplot_** is the second best option for highlighting data distribution properties. It mainly does this via different options for combining boxplots with jittered data as well as indicating means and medians on the boxplots to reveal skewness. It is also offers many options when it comes to the stylistic aspects of the plots.
+**_daboxplot_** is the second best option for highlighting data distribution properties. It mainly does this via different options for combining boxplots with jittered data as well as indicating means and medians on the boxplots to reveal skewness. It also offers many options when it comes to the stylistic aspects of the plots.
 
 The examples below illustrate most of the functionality and options (see _daboxplot_demo.m_ for the code).
 
