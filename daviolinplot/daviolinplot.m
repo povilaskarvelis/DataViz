@@ -30,8 +30,9 @@ function h = daviolinplot(Y,varargin)
 %   'groups'          A vector containing grouping variables. By default
 %                     assumes a single group for a matrix data input. 
 %
-%   'violin'          'half' - half-violins (default) 
-%                     'full' - full violins
+%   'violin'          'half'  - half-violins, right side (default) 
+%                     'half2' - half-violins, left side 
+%                     'full'  - full violins
 %
 %   'colors'          The RGB matrix for violin colors of different groups
 %                     (each row corresponding to a different group). If not
@@ -201,10 +202,10 @@ addOptional(p, 'legend', []);
 parse(p, varargin{:});
 confs = p.Results;
 
-% get group indices and labels
+% get group indices 
 if ~isempty(confs.groups)
-    [Gi,Gn,Gv] = grp2idx(confs.groups);
-    num_groups = numel(Gv);
+    [Gi, Gn] = findgroups(confs.groups);
+    num_groups = numel(Gn);
 end
 
 % find the number of groups
@@ -216,13 +217,7 @@ if iscell(Y)
         y = [y; Y{g}];
         Gi = [Gi; g*ones(size(Y{g},1),1)];
     end   
-       
-    % default numbered group labels
-    if ~exist('Gn','var')
-        for g = 1:num_groups
-            Gn{g} = num2str(g);
-        end
-    end    
+        
     Y = y; % replace the cell with a data array
     
 elseif ismatrix(Y)     
@@ -314,6 +309,7 @@ for g = 1:num_groups
     if strcmp(confs.violin,'full')        
         box_xcor = reshape([x1; x2],2,[]);    
         whi_xcor = [gpos(g,:); gpos(g,:)];  
+
     elseif strcmp(confs.violin,'half')
         if confs.box==3
             bpos = -15;
@@ -324,6 +320,17 @@ for g = 1:num_groups
         end
         box_xcor = reshape([x1; x2],2,[])-box_width/bpos;    
         whi_xcor = [gpos(g,:); gpos(g,:)]-box_width/bpos;
+
+    elseif strcmp(confs.violin,'half2')
+        if confs.box==3
+            bpos = 15;
+        elseif confs.box==2  
+            bpos = 2;
+        else
+            bpos = 0.5;            
+        end
+        box_xcor = reshape([x1; x2],2,[])+box_width/bpos;    
+        whi_xcor = [gpos(g,:); gpos(g,:)]+box_width/bpos;
     end
     
     % draw one box at a time
@@ -351,7 +358,13 @@ for g = 1:num_groups
             else
                 h.ds(k,g) = fill(f+gpos(g,k),xi,confs.colors(g,:));
             end 
-        end       
+        elseif strcmp(confs.violin,'half2')   
+            if confs.box==3
+                h.ds(k,g) = fill(1.3.*-fliplr(f)+gpos(g,k),xi,confs.colors(g,:));
+            else
+                h.ds(k,g) = fill(-fliplr(f)+gpos(g,k),xi,confs.colors(g,:));
+            end 
+        end      
         
         set(h.ds(k,g),'FaceAlpha',confs.violinalpha); hold on
              
@@ -421,8 +434,12 @@ for g = 1:num_groups
         end  
         
         % default: scatter on boxplot if half violin is used
-        if strcmp(confs.violin,'half') && confs.jitter~=2
-            xdata = xdata - box_width/2;
+        if confs.jitter~=2
+            if strcmp(confs.violin,'half')
+                xdata = xdata - box_width/2;
+            elseif strcmp(confs.violin,'half2')
+                xdata = xdata + 2*box_width;
+            end
         end
         
         % specify the x position of the data scatter

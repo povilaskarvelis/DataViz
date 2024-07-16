@@ -176,10 +176,10 @@ addOptional(p, 'legend', []);
 parse(p, varargin{:});
 confs = p.Results;    
 
-% get group indices and labels
+% get group indices
 if ~isempty(confs.groups)
-    [Gi,Gn,Gv] = grp2idx(confs.groups);
-    num_groups = numel(Gv);
+    [Gi,Gn] = findgroups(confs.groups);
+    num_groups = numel(Gn);
 end
 
 % find the number of groups
@@ -191,13 +191,7 @@ if iscell(Y)
         y = [y; Y{g}];
         Gi = [Gi; g*ones(size(Y{g},1),1)];
     end   
-       
-    % default numbered group labels
-    if ~exist('Gn','var')
-        for g = 1:num_groups
-            Gn{g} = num2str(g);
-        end
-    end    
+        
     Y = y; % replace the cell with a data array
     
 elseif ismatrix(Y) 
