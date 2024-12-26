@@ -170,33 +170,33 @@ h = struct;
 p = inputParser;
 
 % specify default options
-addOptional(p, 'groups', []);
-addOptional(p, 'violin', 'half'); 
-addOptional(p, 'bins', 10);
-addOptional(p, 'colors', get(gca,'colororder'));
-addOptional(p, 'violinalpha', 1);
-addOptional(p, 'violinwidth', 1);
-addOptional(p, 'smoothing','default');
-addOptional(p, 'box', 2);
-addOptional(p, 'boxcolors', 'k'); 
-addOptional(p, 'whiskers', 1);
-addOptional(p, 'scatter', 0); 
-addOptional(p, 'scattersize', 20)
-addOptional(p, 'scattercolors', 'k'); 
-addOptional(p, 'flipcolors', 0);
-addOptional(p, 'scatteralpha', 1); 
-addOptional(p, 'jitter', 0);
-addOptional(p, 'jitterspacing', 1);
-addOptional(p, 'outliers', 1); 
-addOptional(p, 'outfactor', 1.5);
-addOptional(p, 'outsymbol', 'k*'); 
-addOptional(p, 'boxalpha', 1);
-addOptional(p, 'boxspacing', 1);
-addOptional(p, 'boxwidth', 1);
-addOptional(p, 'linkline',0);
-addOptional(p, 'withinlines',0);
-addOptional(p, 'xtlabels', []);
-addOptional(p, 'legend', []);
+addParameter(p, 'groups', []);
+addParameter(p, 'violin', 'half'); 
+addParameter(p, 'bins', 10);
+addParameter(p, 'colors', get(gca,'colororder'));
+addParameter(p, 'violinalpha', 1);
+addParameter(p, 'violinwidth', 1);
+addParameter(p, 'smoothing','default');
+addParameter(p, 'box', 2);
+addParameter(p, 'boxcolors', 'k'); 
+addParameter(p, 'whiskers', 1);
+addParameter(p, 'scatter', 0); 
+addParameter(p, 'scattersize', 20)
+addParameter(p, 'scattercolors', 'k'); 
+addParameter(p, 'flipcolors', 0);
+addParameter(p, 'scatteralpha', 1); 
+addParameter(p, 'jitter', 0);
+addParameter(p, 'jitterspacing', 1);
+addParameter(p, 'outliers', 1); 
+addParameter(p, 'outfactor', 1.5);
+addParameter(p, 'outsymbol', 'k*'); 
+addParameter(p, 'boxalpha', 1);
+addParameter(p, 'boxspacing', 1);
+addParameter(p, 'boxwidth', 1);
+addParameter(p, 'linkline',0);
+addParameter(p, 'withinlines',0);
+addParameter(p, 'xtlabels', []);
+addParameter(p, 'legend', []);
 
 % parse the input options
 parse(p, varargin{:});
