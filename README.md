@@ -1,7 +1,6 @@
 # DataViz 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12749045.svg)](https://doi.org/10.5281/zenodo.12749045)
 
-
 Statistical visualization functions for Matlab.
 
 ## Functions for visualizing 2-level factorial data (conditions x groups)
@@ -17,7 +16,7 @@ All three functions:
 
 ## daviolinplot.m 
 
-**_daviolinplot_** is the best option for highlighitng data distribution properties. It combines boxplots, kernel density, and data scatter to produce different hybrids of violin plots, half-violin plots, raincloud plots, and dotplots. Kernel density highlights the overall shape of the data distribution, pertinent for the normality assumption. Dotplots, while similar in that regard, also they convey information about the exact number of datapoints across the distribution. 
+**_daviolinplot_** is the best option for highlighitng data distribution properties. It combines boxplots, kernel density, and data scatter to produce different hybrids of violin plots, half-violin plots, raincloud plots, and dotplots. Kernel density highlights the overall shape of the data distribution, which is relevant for the normality assumption. Dotplots, while similar in that regard, also convey information about the exact number of datapoints across the distribution. 
 
 Note: dotplots usually require some tweaking to make them look presentable. You may have to play around with bin number ('_bins_') and marker size ('_scattersize_') to make it look right.
 
@@ -28,13 +27,13 @@ The examples below illustrate most of the functionality and options (see _daviol
 
 ## daboxplot.m
 
-**_daboxplot_** is the second best option for highlighting data distribution properties. It mainly does this via different options for combining boxplots with jittered data as well as indicating means and medians on the boxplots to reveal skewness. It also offers many options when it comes to the stylistic aspects of the plots.
+**_daboxplot_** is the second best option for highlighting data distribution properties. It does this mainly via combining boxplots with jittered data as well as indicating means and medians on the boxplots to reveal skewness. It also offers many options when it comes to the stylistic aspects of the plots.
 
 The examples below illustrate most of the functionality and options (see _daboxplot_demo.m_ for the code).
 
 ![](daboxplot/daboxplot_examples.png)
 
-The examples below illustrate more recently added options:
+The examples below illustrate more recently added options (note, these options exist for _daviolinplot_ too):
 - Indicate means on each box (to show skewness)
 - Link the boxes within each group (to emphasize interaction effects)
 - Link datapoints across conditions (to emphasize within-individual effects)
@@ -49,3 +48,10 @@ The examples below illustrate more recently added options:
 The examples below illustrate most of the functionality and options (see _dabarplot_demo.m_ for the code).
 
 ![](dabarplot/dabarplot_examples.png)
+
+
+## Citation
+
+If you want to cite this toolbox in your work, follow the [link to Zenodo](https://doi.org/10.5281/zenodo.12749045) and find a formatted citation for the latest release there.
+
+

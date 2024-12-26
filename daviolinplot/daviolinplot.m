@@ -182,8 +182,11 @@ addParameter(p, 'bins', 10);
 addParameter(p, 'colors', get(gca,'colororder'));
 addParameter(p, 'violinalpha', 1);
 addParameter(p, 'violinwidth', 1);
+<<<<<<< HEAD
 addParameter(p, 'violinmin',[]);
 addParameter(p, 'violinmax',[]);
+=======
+>>>>>>> 87178648104a9d2e1b75fee13c302ddb3d365bee
 addParameter(p, 'smoothing','default');
 addParameter(p, 'box', 2);
 addParameter(p, 'boxcolors', 'k'); 
