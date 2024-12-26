@@ -44,12 +44,18 @@ function h = daviolinplot(Y,varargin)
 %   'violinwidth'     Scalar value for scaling the width of violins
 %                     Default: 1
 %
+%   'violinmin'       Scalar value for truncating the violins at the lowest
+%                     practically possible value that data can take
+%                     Default: no lower limit
+%
+%   'violinmax'       Scalar value for truncating the violins at the lowest
+%                     practically possible value that data can take
+%                     Default: no lower limit
 %
 %   'smoothing'       A scalar value for bandwith of the smoothing kernel. 
 %                     The default is optimal for estimating normal 
 %                     densities, but you may want to choose a smaller value
 %                     to reveal features such as multiple modes.
-%
 %
 %   'box'             Whether to include and where to include the boxplots.
 %                     Note that location options only work for half violins
@@ -170,33 +176,35 @@ h = struct;
 p = inputParser;
 
 % specify default options
-addOptional(p, 'groups', []);
-addOptional(p, 'violin', 'half'); 
-addOptional(p, 'bins', 10);
-addOptional(p, 'colors', get(gca,'colororder'));
-addOptional(p, 'violinalpha', 1);
-addOptional(p, 'violinwidth', 1);
-addOptional(p, 'smoothing','default');
-addOptional(p, 'box', 2);
-addOptional(p, 'boxcolors', 'k'); 
-addOptional(p, 'whiskers', 1);
-addOptional(p, 'scatter', 0); 
-addOptional(p, 'scattersize', 20)
-addOptional(p, 'scattercolors', 'k'); 
-addOptional(p, 'flipcolors', 0);
-addOptional(p, 'scatteralpha', 1); 
-addOptional(p, 'jitter', 0);
-addOptional(p, 'jitterspacing', 1);
-addOptional(p, 'outliers', 1); 
-addOptional(p, 'outfactor', 1.5);
-addOptional(p, 'outsymbol', 'k*'); 
-addOptional(p, 'boxalpha', 1);
-addOptional(p, 'boxspacing', 1);
-addOptional(p, 'boxwidth', 1);
-addOptional(p, 'linkline',0);
-addOptional(p, 'withinlines',0);
-addOptional(p, 'xtlabels', []);
-addOptional(p, 'legend', []);
+addParameter(p, 'groups', []);
+addParameter(p, 'violin', 'half'); 
+addParameter(p, 'bins', 10);
+addParameter(p, 'colors', get(gca,'colororder'));
+addParameter(p, 'violinalpha', 1);
+addParameter(p, 'violinwidth', 1);
+addParameter(p, 'violinmin',[]);
+addParameter(p, 'violinmax',[]);
+addParameter(p, 'smoothing','default');
+addParameter(p, 'box', 2);
+addParameter(p, 'boxcolors', 'k'); 
+addParameter(p, 'whiskers', 1);
+addParameter(p, 'scatter', 0); 
+addParameter(p, 'scattersize', 20)
+addParameter(p, 'scattercolors', 'k'); 
+addParameter(p, 'flipcolors', 0);
+addParameter(p, 'scatteralpha', 1); 
+addParameter(p, 'jitter', 0);
+addParameter(p, 'jitterspacing', 1);
+addParameter(p, 'outliers', 1); 
+addParameter(p, 'outfactor', 1.5);
+addParameter(p, 'outsymbol', 'k*'); 
+addParameter(p, 'boxalpha', 1);
+addParameter(p, 'boxspacing', 1);
+addParameter(p, 'boxwidth', 1);
+addParameter(p, 'linkline',0);
+addParameter(p, 'withinlines',0);
+addParameter(p, 'xtlabels', []);
+addParameter(p, 'legend', []);
 
 % parse the input options
 parse(p, varargin{:});
@@ -343,8 +351,38 @@ for g = 1:num_groups
             [f,xi] = ksdensity(data_vals);
         else
             [f,xi] = ksdensity(data_vals,'Bandwidth',confs.smoothing);
+        end        
+
+        % truncate the violins if needed
+        if ~isempty(confs.violinmin) || ~isempty(confs.violinmax)
+            
+            % determine xmin and xmax based on the specified bounds or defaults
+            if ~isempty(confs.violinmin)
+                xmin = confs.violinmin;
+            else
+                xmin = min(xi);
+            end
+            
+            if ~isempty(confs.violinmax)
+                xmax = confs.violinmax;
+            else
+                xmax = max(xi);
+            end
+            
+            % truncate xi and f based on the bounds
+            validIdx = (xi >= xmin) & (xi <= xmax);
+            f = f(validIdx);
+            xi = xi(validIdx);
+            
+            % adjust xi endpoints
+            xi(1) = xmin;
+            xi(end) = xmax;
+            
+            % expand xi slightly at the ends and adjust f
+            xi = [xi(1)*(1-1E-5), xi, xi(end)*(1+1E-5)];
+            f = [0, f, 0];
         end
-        
+
         % normalize/scale density
         f = confs.violinwidth.*(f/max(f))*(21*box_width/(num_groups+7));
 
@@ -360,9 +398,9 @@ for g = 1:num_groups
             end 
         elseif strcmp(confs.violin,'half2')   
             if confs.box==3
-                h.ds(k,g) = fill(1.3.*-fliplr(f)+gpos(g,k),xi,confs.colors(g,:));
+                h.ds(k,g) = fill(-1.3.*f+gpos(g,k),xi,confs.colors(g,:));
             else
-                h.ds(k,g) = fill(-fliplr(f)+gpos(g,k),xi,confs.colors(g,:));
+                h.ds(k,g) = fill(-f+gpos(g,k),xi,confs.colors(g,:));
             end 
         end      
         

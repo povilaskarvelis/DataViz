@@ -150,27 +150,27 @@ h = struct;
 p = inputParser;
 
 % specify default options
-addOptional(p, 'groups', []);
-addOptional(p, 'fill', 1); 
-addOptional(p, 'colors', get(gca,'colororder'));
-addOptional(p, 'whiskers', 1);
-addOptional(p, 'scatter', 0); 
-addOptional(p, 'scattersize', 15)
-addOptional(p, 'scattercolors', {'k','w'}); 
-addOptional(p, 'flipcolors', 0);
-addOptional(p, 'scatteralpha', 1); 
-addOptional(p, 'jitter', 1);
-addOptional(p, 'mean', 0);
-addOptional(p, 'outliers', 1); 
-addOptional(p, 'outfactor', 1.5);
-addOptional(p, 'outsymbol', 'rx'); 
-addOptional(p, 'boxalpha', 1);
-addOptional(p, 'boxspacing', 1);
-addOptional(p, 'boxwidth', 1);
-addOptional(p, 'linkline',0);
-addOptional(p, 'withinlines',0);
-addOptional(p, 'xtlabels', []);
-addOptional(p, 'legend', []);
+addParameter(p, 'groups', []);
+addParameter(p, 'fill', 1); 
+addParameter(p, 'colors', get(gca,'colororder'));
+addParameter(p, 'whiskers', 1);
+addParameter(p, 'scatter', 0); 
+addParameter(p, 'scattersize', 15)
+addParameter(p, 'scattercolors', {'k','w'}); 
+addParameter(p, 'flipcolors', 0);
+addParameter(p, 'scatteralpha', 1); 
+addParameter(p, 'jitter', 1);
+addParameter(p, 'mean', 0);
+addParameter(p, 'outliers', 1); 
+addParameter(p, 'outfactor', 1.5);
+addParameter(p, 'outsymbol', 'rx'); 
+addParameter(p, 'boxalpha', 1);
+addParameter(p, 'boxspacing', 1);
+addParameter(p, 'boxwidth', 1);
+addParameter(p, 'linkline',0);
+addParameter(p, 'withinlines',0);
+addParameter(p, 'xtlabels', []);
+addParameter(p, 'legend', []);
 
 % parse the input options
 parse(p, varargin{:});

@@ -138,28 +138,28 @@ h = struct;
 p = inputParser;
 
 % specify default options
-addOptional(p, 'groups', []);
-addOptional(p, 'fill', 1); 
-addOptional(p, 'colors', get(gca,'colororder'));
-addOptional(p, 'errorbars', 'SE');
-addOptional(p, 'errorhats', 1);
-addOptional(p, 'scatter', 0); 
-addOptional(p, 'scattersize', 15)
-addOptional(p, 'scattercolors', {'k','w'}); 
-addOptional(p, 'condcolors', 0);
-addOptional(p, 'scatteralpha', 1); 
-addOptional(p, 'jitter', 1);
-addOptional(p, 'mean', 1);
-addOptional(p, 'outliers', 0); 
-addOptional(p, 'symbol', 'rx'); 
-addOptional(p, 'baralpha', 1);
-addOptional(p, 'barspacing', 1);
-addOptional(p, 'barwidth', 1);
-addOptional(p, 'bartype', 'grouped');
-addOptional(p, 'numbers', 0);
-addOptional(p, 'round', 0);
-addOptional(p, 'xtlabels', []);
-addOptional(p, 'legend', []);
+addParameter(p, 'groups', []);
+addParameter(p, 'fill', 1); 
+addParameter(p, 'colors', get(gca,'colororder'));
+addParameter(p, 'errorbars', 'SE');
+addParameter(p, 'errorhats', 1);
+addParameter(p, 'scatter', 0); 
+addParameter(p, 'scattersize', 15)
+addParameter(p, 'scattercolors', {'k','w'}); 
+addParameter(p, 'condcolors', 0);
+addParameter(p, 'scatteralpha', 1); 
+addParameter(p, 'jitter', 1);
+addParameter(p, 'mean', 1);
+addParameter(p, 'outliers', 0); 
+addParameter(p, 'symbol', 'rx'); 
+addParameter(p, 'baralpha', 1);
+addParameter(p, 'barspacing', 1);
+addParameter(p, 'barwidth', 1);
+addParameter(p, 'bartype', 'grouped');
+addParameter(p, 'numbers', 0);
+addParameter(p, 'round', 0);
+addParameter(p, 'xtlabels', []);
+addParameter(p, 'legend', []);
 
 % parse the input options
 parse(p, varargin{:});
