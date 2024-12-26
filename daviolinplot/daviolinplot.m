@@ -360,9 +360,9 @@ for g = 1:num_groups
             end 
         elseif strcmp(confs.violin,'half2')   
             if confs.box==3
-                h.ds(k,g) = fill(1.3.*-fliplr(f)+gpos(g,k),xi,confs.colors(g,:));
+                h.ds(k,g) = fill(-1.3.*f+gpos(g,k),xi,confs.colors(g,:));
             else
-                h.ds(k,g) = fill(-fliplr(f)+gpos(g,k),xi,confs.colors(g,:));
+                h.ds(k,g) = fill(-f+gpos(g,k),xi,confs.colors(g,:));
             end 
         end      
         
